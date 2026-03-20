@@ -281,8 +281,9 @@
 }
 
 /* ---------- Stream view (continuous) ---------- */
+/* max-width keeps month tables at ~4:3 aspect ratio */
 .qc-stream-view {
-  max-width: 300px;
+  max-width: 450px;
   margin: 0 auto;
 }
 
@@ -314,31 +315,33 @@
 }
 
 /* ---------- List view (1×12 single column) ---------- */
+/* Larger month cards with roomy cells — max-width maintains ~4:3 per card */
 .qc-list-view {
-  max-width: 400px;
+  max-width: 800px;
   margin: 0 auto;
+  font-size: 18px;
 }
 
 .qc-list-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
 .qc-list-month {
   border: 1px solid var(--background-modifier-border);
   border-radius: var(--radius-m);
-  padding: 12px 16px;
+  padding: 20px 24px;
   background: var(--background-primary);
 }
 
 .qc-list-month-title {
-  font-size: var(--font-ui-medium);
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-normal);
   text-align: center;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 2px solid var(--interactive-accent);
 }
 
@@ -348,18 +351,18 @@
 }
 
 .qc-list-month .qc-day-cell {
-  width: 36px;
-  height: 32px;
-  line-height: 32px;
+  height: 56px;
+  line-height: 56px;
 }
 
 .qc-list-month .qc-day-header {
-  width: 36px;
-  padding: 4px 0 6px 0;
+  padding: 8px 0 10px 0;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .qc-list-month .qc-day-link {
-  font-size: var(--font-ui-small);
+  font-size: 18px;
 }
 
 /* ---------- Responsive ---------- */
