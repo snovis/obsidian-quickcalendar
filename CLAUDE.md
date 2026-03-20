@@ -83,5 +83,19 @@ npm run build        # Production build (type-check + bundle)
 - License: MIT
 
 ## Extras
-- `extras/templater-daily-note-trigger.md` — Templater folder template script
-  that auto-applies daily note templates when clicking wikilinks
+- `extras/Daily Note Template.md` — Ready-to-use Templater folder template (v20)
+  that auto-applies daily note formatting when any `YYYY-MM-DD` named file is
+  created in the Daily Notes folder. Works with wikilink clicks from QuickCalendar
+  or anywhere in the vault.
+- `extras/templater-daily-note-trigger.md` — Documentation explaining the folder
+  trigger setup, how the date guard works, and the v20 migration from legacy
+  `{{date:...}}` syntax to Templater `moment()` calls.
+
+### Daily Note Template History
+- The vault's canonical template is `templater/Daily Note - ACTIVE.md` in NovisVault
+- v19 → v20: Replaced `{{date:MMMM Do, YYYY}}` and `{{date:dddd}}` (Obsidian core
+  Templates syntax) with `moment(tp.file.title, "YYYY-MM-DD").format(...)` calls.
+  The core syntax only works when the Daily Notes plugin creates the file; the
+  Templater `moment()` equivalents work in all contexts including folder triggers.
+- The folder trigger version (`extras/Daily Note Template.md`) is identical to
+  `Daily Note - ACTIVE.md` v20 plus a date-format guard at the top.

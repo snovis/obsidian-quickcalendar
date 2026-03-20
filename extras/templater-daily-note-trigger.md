@@ -1,105 +1,42 @@
----
-description: |
-  Templater folder template script for auto-creating daily notes from wikilinks.
+# Templater Daily Note Folder Trigger
 
-  SETUP INSTRUCTIONS:
-  1. Copy the code block below into a template file in your vault (e.g., Templates/Daily Note.md)
-  2. In Templater settings, go to "Folder Templates"
-  3. Add a mapping: your Daily Notes folder → this template
-  4. Enable "Trigger Templater on new file creation"
+## What This Is
 
-  HOW IT WORKS:
-  When you click a wikilink like [[2026-03-20]], Obsidian creates a blank note.
-  Templater's folder template fires and this script:
-  1. Checks if the filename matches a date pattern (YYYY-MM-DD by default)
-  2. If it matches, applies the daily note template content
-  3. If it doesn't match, leaves the file alone (for non-date notes in the same folder)
+A Templater **folder template** that auto-applies the Daily Note template when a
+new file with a `YYYY-MM-DD` filename is created in the Daily Notes folder.
 
-  CUSTOMIZE:
-  - Change the DATE_REGEX to match your date format
-  - Edit the template content below the script block to your liking
----
+This means clicking any wikilink like `[[2026-03-20]]` — whether from QuickCalendar,
+a navigation link, or anywhere in your vault — will create a fully formatted daily note.
 
-# Templater Daily Note Folder Template
+## How It Works
 
-Save this as your daily note template (e.g., `Templates/Daily Note.md`):
+The trigger script is a copy of `Daily Note - ACTIVE.md` (v20) with one addition:
+a date-format guard at the top. When a new file is created in the Daily Notes folder:
 
-```
-<%*
-// === QuickCalendar Daily Note Trigger ===
-// This Templater script runs when a new file is created in your Daily Notes folder.
-// It checks if the filename looks like a date and applies the template if so.
+1. Templater fires the folder template
+2. The guard checks if the filename matches `YYYY-MM-DD` format
+3. If yes → applies the full daily note template (identical output to the core template)
+4. If no → bails out silently, leaving the file untouched
 
-// Adjust this regex to match your daily note date format:
-// YYYY-MM-DD → /^\d{4}-\d{2}-\d{2}$/
-// DD-MM-YYYY → /^\d{2}-\d{2}-\d{4}$/
-// YYYY.MM.DD → /^\d{4}\.\d{2}\.\d{2}$/
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+This guard is important because other non-date files might be created in the
+Daily Notes folder, and you don't want the template applied to those.
 
-const filename = tp.file.title;
+## Setup
 
-if (!DATE_REGEX.test(filename)) {
-  // Not a date-formatted file — skip template application
-  // This prevents the template from being applied to non-daily-note files
-  // that happen to be created in the same folder
-  return;
-}
+1. Copy `Daily Note Template.md` (in this folder) to your vault's Templates folder
+2. In Templater settings → **Folder Templates**, map your Daily Notes folder to that template
+3. Enable **"Trigger Templater on new file creation"** in Templater settings
 
-// Parse the date from the filename for use in the template
-const parts = filename.split('-');
-const fileDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][fileDate.getDay()];
-const monthName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][fileDate.getMonth()];
+## V20 Changes (2026-03-20)
 
-// Calculate navigation dates
-const prevDate = new Date(fileDate);
-prevDate.setDate(prevDate.getDate() - 1);
-const nextDate = new Date(fileDate);
-nextDate.setDate(nextDate.getDate() + 1);
-const prevStr = prevDate.toISOString().slice(0, 10);
-const nextStr = nextDate.toISOString().slice(0, 10);
--%>
----
-date: <% filename %>
-day: <% dayOfWeek %>
----
+Replaced legacy `{{date:...}}` syntax (Obsidian core Templates plugin) with
+Templater `moment()` calls. The `{{date:...}}` tags were fossils from early
+template versions — they only worked when the core Daily Notes plugin created
+the file. The `moment()` equivalents work in all contexts: core daily note
+creation, Templater folder triggers, and manual template insertion.
 
-# <% dayOfWeek %>, <% monthName %> <% fileDate.getDate() %>, <% fileDate.getFullYear() %>
+Specific replacements:
+- `{{date:MMMM Do, YYYY}}` → `<% moment(tp.file.title, "YYYY-MM-DD").format("MMMM Do, YYYY") %>`
+- `{{date:dddd}}` → `<% moment(tp.file.title, "YYYY-MM-DD").format("dddd") %>`
 
-← [[<% prevStr %>]] | [[<% nextStr %>]] →
-
-## Tasks
-- [ ]
-
-## Notes
-
-
-## Journal
-
-<%*
-// You can add more dynamic content here.
-// For example, to auto-link to a weekly note:
-// const weekNum = tp.date.now("ww", 0, filename, "YYYY-MM-DD");
-// tR += `\nWeekly: [[${fileDate.getFullYear()}-W${weekNum}]]\n`;
--%>
-```
-
-## Alternative: Minimal Version
-
-If you want a simpler template without the date guard (use this if your Daily Notes folder ONLY contains daily notes):
-
-```
----
-date: <% tp.file.title %>
----
-
-# <% tp.file.title %>
-
-← [[<% tp.date.now("YYYY-MM-DD", -1, tp.file.title, "YYYY-MM-DD") %>]] | [[<% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>]] →
-
-## Tasks
-- [ ]
-
-## Notes
-
-```
+Also removed commented-out legacy moment code that was superseded by `tp.date.now()` calls.
