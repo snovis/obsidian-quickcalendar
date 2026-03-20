@@ -1,6 +1,6 @@
 {
   "name": "obsidian-quickcalendar",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "description": "A year-at-a-glance calendar plugin for Obsidian with multiple view modes",
   "main": "main.js",
   "scripts": {

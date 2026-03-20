@@ -1,5 +1,6 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import { QuickCalendarSettings, WeekDay, CalendarView } from './types';
+import { FileSuggest, FolderSuggest } from './suggest';
 import type QuickCalendarPlugin from './main';
 
 export class QuickCalendarSettingTab extends PluginSettingTab {
@@ -83,46 +84,49 @@ export class QuickCalendarSettingTab extends PluginSettingTab {
           }),
       );
 
-    // Daily note folder
+    // Daily note folder (with folder suggest)
     new Setting(containerEl)
       .setName('Daily notes folder')
       .setDesc('Folder where daily notes are stored. Leave blank to auto-detect.')
-      .addText((text) =>
+      .addText((text) => {
         text
           .setPlaceholder('Daily Notes')
           .setValue(this.plugin.settings.dailyNoteFolder)
           .onChange(async (value) => {
             this.plugin.settings.dailyNoteFolder = value;
             await this.plugin.saveSettings();
-          }),
-      );
+          });
+        new FolderSuggest(this.app, text.inputEl);
+      });
 
-    // Daily note template
+    // Daily note template (with file suggest)
     new Setting(containerEl)
       .setName('Daily note template')
       .setDesc('Path to template file for new daily notes. Leave blank to auto-detect.')
-      .addText((text) =>
+      .addText((text) => {
         text
           .setPlaceholder('Templates/Daily Note.md')
           .setValue(this.plugin.settings.dailyNoteTemplate)
           .onChange(async (value) => {
             this.plugin.settings.dailyNoteTemplate = value;
             await this.plugin.saveSettings();
-          }),
-      );
+          });
+        new FileSuggest(this.app, text.inputEl);
+      });
 
-    // Weekly note template
+    // Weekly note template (with file suggest)
     new Setting(containerEl)
       .setName('Weekly note template')
       .setDesc('Path to template file for new weekly notes (created when clicking week numbers). Leave blank to create empty files.')
-      .addText((text) =>
+      .addText((text) => {
         text
           .setPlaceholder('templater/Weekly Note Template.md')
           .setValue(this.plugin.settings.weeklyNoteTemplate)
           .onChange(async (value) => {
             this.plugin.settings.weeklyNoteTemplate = value;
             await this.plugin.saveSettings();
-          }),
-      );
+          });
+        new FileSuggest(this.app, text.inputEl);
+      });
   }
 }

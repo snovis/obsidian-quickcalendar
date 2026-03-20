@@ -119,9 +119,48 @@ export function formatWeekFilename(year: number, weekNum: number): string {
 }
 
 /**
+ * Try to use Templater's API to process a template into a file.
+ * Uses write_template_to_file (same API used by Periodic Notes plugin).
+ * Returns true if Templater handled it, false otherwise.
+ */
+async function applyTemplateViaTemplater(
+  app: App,
+  file: TFile,
+  templateFile: TFile,
+): Promise<boolean> {
+  try {
+    const templaterPlugin = (app as any).plugins?.getPlugin?.('templater-obsidian');
+    if (!templaterPlugin || templaterPlugin._disabled) return false;
+
+    const templater = templaterPlugin.templater;
+    if (!templater || typeof templater.write_template_to_file !== 'function') return false;
+
+    await templater.write_template_to_file(templateFile, file);
+    return true;
+  } catch (e) {
+    console.warn('QuickCalendar: Templater integration failed, falling back to basic substitution', e);
+    return false;
+  }
+}
+
+/**
+ * Apply basic {{variable}} substitution as a fallback when Templater isn't available.
+ */
+function applyBasicSubstitution(content: string, filename: string): string {
+  return content
+    .replace(/{{title}}/g, filename)
+    .replace(/{{date}}/g, filename)
+    .replace(/{{time}}/g, new Date().toLocaleTimeString());
+}
+
+/**
  * Open an existing weekly note or create a new one.
  * Weekly notes use the YYYY-Www format (e.g., 2026-W10).
  * They live in the same folder as daily notes by default.
+ *
+ * Template processing:
+ * 1. If Templater plugin is available, use its API (supports full <%...%> syntax)
+ * 2. Otherwise, fall back to basic {{title}}/{{date}}/{{time}} substitution
  */
 export async function openOrCreateWeeklyNote(
   app: App,
@@ -151,21 +190,28 @@ export async function openOrCreateWeeklyNote(
     }
   }
 
-  // Read template if specified
-  let content = '';
+  // Resolve template file (if any)
+  let templateFile: TFile | null = null;
   if (templatePath) {
     const tplPath = normalizePath(templatePath);
-    const tplFile = app.vault.getAbstractFileByPath(tplPath);
-    if (tplFile instanceof TFile) {
-      content = await app.vault.read(tplFile);
-      // Basic variable substitution
-      content = content
-        .replace(/{{title}}/g, filename)
-        .replace(/{{date}}/g, filename)
-        .replace(/{{time}}/g, new Date().toLocaleTimeString());
+    const tplAbstract = app.vault.getAbstractFileByPath(tplPath);
+    if (tplAbstract instanceof TFile) {
+      templateFile = tplAbstract;
     }
   }
 
-  const newFile = await app.vault.create(normalizedPath, content);
+  // Create the file (empty initially — template applied after)
+  const newFile = await app.vault.create(normalizedPath, '');
   await app.workspace.getLeaf(false).openFile(newFile);
+
+  // Apply template
+  if (templateFile) {
+    const templaterHandled = await applyTemplateViaTemplater(app, newFile, templateFile);
+
+    if (!templaterHandled) {
+      // Fallback: read template and do basic substitution
+      const content = await app.vault.read(templateFile);
+      await app.vault.modify(newFile, applyBasicSubstitution(content, filename));
+    }
+  }
 }
