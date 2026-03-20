@@ -40,22 +40,30 @@ export class StreamRenderer extends BaseRenderer {
     const currentRealMonth = new Date().getMonth();
 
     while (currentDate <= streamEnd) {
-      // Check if we're entering a new month (from our year's months)
-      const dateMonth = currentDate.getMonth();
-      const dateYear = currentDate.getFullYear();
-      const isInTargetYear = dateYear === year;
+      // Scan the 7 days in this week to see if any day is the 1st of a new month
+      for (let i = 0; i < 7; i++) {
+        const peekDate = new Date(currentDate);
+        peekDate.setDate(peekDate.getDate() + i);
+        const peekMonth = peekDate.getMonth();
+        const peekYear = peekDate.getFullYear();
 
-      if (isInTargetYear && dateMonth !== currentMonth) {
-        // Insert month separator/label
-        currentMonth = dateMonth;
-        const separatorRow = tbody.createEl('tr', { cls: 'qc-stream-month-separator' });
-        const colSpan = this.config.weekNumbers ? 8 : 7;
-        separatorRow.createEl('td', {
-          cls: 'qc-stream-month-label',
-          text: this.months[dateMonth].name,
-          attr: { colspan: String(colSpan) },
-        });
+        if (peekYear === year && peekMonth !== currentMonth) {
+          // Insert month separator BEFORE this week row
+          currentMonth = peekMonth;
+          const separatorRow = tbody.createEl('tr', { cls: 'qc-stream-month-separator' });
+          const colSpan = this.config.weekNumbers ? 8 : 7;
+          separatorRow.createEl('td', {
+            cls: 'qc-stream-month-label',
+            text: this.months[peekMonth].name,
+            attr: { colspan: String(colSpan) },
+          });
+          break; // Only one separator per week row
+        }
       }
+
+      const dateYear = currentDate.getFullYear();
+      const dateMonth = currentDate.getMonth();
+      const isInTargetYear = dateYear === year;
 
       // Build a week row
       const row = tbody.createEl('tr', {
