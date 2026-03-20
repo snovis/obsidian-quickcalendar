@@ -1,7 +1,7 @@
 {
   "id": "quickcalendar",
   "name": "QuickCalendar",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "minAppVersion": "0.16.0",
   "description": "A year-at-a-glance calendar with multiple view modes. Renders full-year calendars in your notes with daily note integration.",
   "author": "Scott Novis",

@@ -112,19 +112,17 @@
   text-decoration: none;
 }
 
-/* Weekend shading — distinct tint visible in both light and dark themes */
-.qc-day-cell.qc-weekend {
-  background-color: var(--background-secondary-alt, var(--background-secondary));
-}
-
+/* Weekend shading — applied to the link element so nothing can obscure it.
+   !important needed to override theme styles (e.g. Minimal) on last-column cells */
 .qc-day-cell.qc-weekend .qc-day-link {
+  background-color: hsla(0, 0%, 50%, 0.12) !important;
   color: var(--text-muted);
 }
 
 /* Weekend column headers */
 .qc-day-header-weekend {
   color: var(--text-faint);
-  background-color: var(--background-secondary-alt, var(--background-secondary));
+  background-color: hsla(0, 0%, 50%, 0.09);
 }
 
 /* Today highlight — highest priority, overrides everything */
@@ -155,7 +153,7 @@
 /* Weekend empty/nonexistent cells should still show shading */
 .qc-day-cell.qc-nonexistent.qc-weekend,
 .qc-day-cell.qc-empty.qc-weekend {
-  background-color: var(--background-secondary-alt, var(--background-secondary));
+  background-color: hsla(0, 0%, 50%, 0.12);
 }
 
 /* Day headers */
@@ -258,7 +256,7 @@
 
 .qc-row-weekend-header {
   color: var(--text-faint);
-  background-color: var(--background-secondary);
+  background-color: hsla(0, 0%, 50%, 0.09);
 }
 
 .qc-row-month-row .qc-day-cell {
@@ -277,7 +275,7 @@
 
 /* Row view weekend shading for entire columns */
 .qc-row-month-row .qc-weekend {
-  background-color: var(--background-secondary);
+  background-color: hsla(0, 0%, 50%, 0.09);
 }
 
 /* ---------- Stream view (continuous) ---------- */
