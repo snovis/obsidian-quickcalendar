@@ -4,6 +4,7 @@ import { BaseRenderer } from './base-renderer';
 import { GridRenderer } from './grid-renderer';
 import { RowRenderer } from './row-renderer';
 import { StreamRenderer } from './stream-renderer';
+import { ListRenderer } from './list-renderer';
 
 /**
  * Renderer registry.
@@ -22,6 +23,7 @@ const RENDERERS: Record<CalendarView, new (
   grid: GridRenderer,
   row: RowRenderer,
   stream: StreamRenderer,
+  list: ListRenderer,
 };
 
 /** Create a renderer for the given view type */

@@ -23,8 +23,9 @@ export class QuickCalendarSettingTab extends PluginSettingTab {
       .addDropdown((dropdown) =>
         dropdown
           .addOption('grid', 'Grid (3×4)')
-          .addOption('row', 'Row (horizontal strips)')
+          .addOption('row', 'Row (yearly planner)')
           .addOption('stream', 'Stream (continuous)')
+          .addOption('list', 'List (1×12)')
           .setValue(this.plugin.settings.defaultView)
           .onChange(async (value) => {
             this.plugin.settings.defaultView = value as CalendarView;

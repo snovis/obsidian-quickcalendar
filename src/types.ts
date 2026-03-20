@@ -8,7 +8,7 @@
  */
 
 /** Supported calendar view types */
-export type CalendarView = 'grid' | 'row' | 'stream';
+export type CalendarView = 'grid' | 'row' | 'stream' | 'list';
 
 /** Days of the week for start-day configuration */
 export type WeekDay = 'sunday' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';

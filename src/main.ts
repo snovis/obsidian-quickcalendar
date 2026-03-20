@@ -15,6 +15,7 @@ const VIEW_LABELS: Record<CalendarView, string> = {
   grid: 'Grid',
   row: 'Row',
   stream: 'Stream',
+  list: 'List',
 };
 
 export default class QuickCalendarPlugin extends Plugin {
@@ -173,7 +174,7 @@ export default class QuickCalendarPlugin extends Plugin {
   }
 
   private validateView(view: string | undefined): CalendarView | null {
-    const valid: CalendarView[] = ['grid', 'row', 'stream'];
+    const valid: CalendarView[] = ['grid', 'row', 'stream', 'list'];
     if (view && valid.includes(view as CalendarView)) {
       return view as CalendarView;
     }
