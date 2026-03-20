@@ -1,7 +1,7 @@
 import { App } from 'obsidian';
 import { QuickCalendarConfig, MonthData, DayInfo } from '../types';
 import { getDayHeaders, getISOWeekNumber, getFirstDayInWeek } from '../utils/date-utils';
-import { openOrCreateDailyNote } from '../utils/daily-notes';
+import { openOrCreateDailyNote, openOrCreateWeeklyNote } from '../utils/daily-notes';
 
 /**
  * Base class for all calendar view renderers.
@@ -87,16 +87,28 @@ export abstract class BaseRenderer {
     }
   }
 
-  /** Create a week number cell */
+  /** Create a clickable week number cell that links to weekly note */
   protected createWeekNumberCell(parent: HTMLElement, week: (DayInfo | null)[]): void {
     if (!this.config.weekNumbers) return;
 
     const firstDay = getFirstDayInWeek(week);
     if (firstDay) {
       const weekNum = getISOWeekNumber(firstDay.date);
-      parent.createEl('td', {
-        cls: 'qc-week-num',
+      const year = firstDay.date.getFullYear();
+      const cell = parent.createEl('td', { cls: 'qc-week-num' });
+      const link = cell.createEl('a', {
+        cls: 'qc-week-link',
         text: String(weekNum),
+        attr: { 'aria-label': `Week ${weekNum}` },
+      });
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        openOrCreateWeeklyNote(
+          this.app,
+          year,
+          weekNum,
+          this.dailyNoteSettings.folder,
+        );
       });
     } else {
       parent.createEl('td', { cls: 'qc-week-num' });

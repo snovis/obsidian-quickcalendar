@@ -177,6 +177,20 @@
   text-align: right;
 }
 
+.qc-week-link {
+  color: var(--text-faint);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--radius-s);
+  padding: 1px 2px;
+}
+
+.qc-week-link:hover {
+  color: var(--text-accent);
+  background-color: var(--background-modifier-hover);
+  text-decoration: none;
+}
+
 /* ---------- Grid view (3×4) ---------- */
 .qc-grid-container {
   display: grid;

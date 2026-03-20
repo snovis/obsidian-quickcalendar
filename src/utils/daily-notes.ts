@@ -1,13 +1,13 @@
 import { App, TFile, TFolder, normalizePath } from 'obsidian';
 import { QuickCalendarSettings } from '../types';
-import { formatDate } from './date-utils';
+import { formatDate, getISOWeekNumber } from './date-utils';
 
 /**
- * Daily notes integration.
+ * Daily and weekly notes integration.
  *
  * We implement this directly rather than depending on obsidian-daily-notes-interface
  * for long-term maintainability. The logic:
- * 1. Read user's daily note settings (folder, format, template)
+ * 1. Read user's daily/weekly note settings (folder, format, template)
  * 2. Format dates to match their filename pattern
  * 3. Check vault for existing notes
  * 4. Create new notes from template when clicked
@@ -107,5 +107,50 @@ export async function openOrCreateDailyNote(
 
   // Create the file and open it
   const newFile = await app.vault.create(normalizedPath, content);
+  await app.workspace.getLeaf(false).openFile(newFile);
+}
+
+/**
+ * Format an ISO week number into YYYY-Www format.
+ * E.g., year 2026, week 10 → "2026-W10"
+ */
+export function formatWeekFilename(year: number, weekNum: number): string {
+  return `${year}-W${String(weekNum).padStart(2, '0')}`;
+}
+
+/**
+ * Open an existing weekly note or create a new one.
+ * Weekly notes use the YYYY-Www format (e.g., 2026-W10).
+ * They live in the same folder as daily notes by default.
+ */
+export async function openOrCreateWeeklyNote(
+  app: App,
+  year: number,
+  weekNum: number,
+  folder: string,
+): Promise<void> {
+  const filename = formatWeekFilename(year, weekNum);
+  const folderPath = folder ? normalizePath(folder) : '';
+  const filePath = folderPath ? `${folderPath}/${filename}.md` : `${filename}.md`;
+  const normalizedPath = normalizePath(filePath);
+
+  // Check if file already exists
+  const file = app.vault.getAbstractFileByPath(normalizedPath);
+
+  if (file instanceof TFile) {
+    await app.workspace.getLeaf(false).openFile(file);
+    return;
+  }
+
+  // Create the folder if it doesn't exist
+  if (folderPath) {
+    const folderExists = app.vault.getAbstractFileByPath(folderPath);
+    if (!folderExists) {
+      await app.vault.createFolder(folderPath);
+    }
+  }
+
+  // Create empty file — Templater folder trigger will handle template application
+  const newFile = await app.vault.create(normalizedPath, '');
   await app.workspace.getLeaf(false).openFile(newFile);
 }
