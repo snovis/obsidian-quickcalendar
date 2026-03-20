@@ -112,17 +112,19 @@
   text-decoration: none;
 }
 
-/* Weekend shading — applied to the link element so nothing can obscure it.
-   !important needed to override theme styles (e.g. Minimal) on last-column cells */
-.qc-day-cell.qc-weekend .qc-day-link {
+/* Weekend shading — !important needed to override Obsidian's nth-child zebra-stripe rule */
+.qc-day-cell.qc-weekend {
   background-color: hsla(0, 0%, 50%, 0.12) !important;
+}
+
+.qc-day-cell.qc-weekend .qc-day-link {
   color: var(--text-muted);
 }
 
-/* Weekend column headers */
+/* Weekend column headers — !important needed to override theme styles on last-column th */
 .qc-day-header-weekend {
   color: var(--text-faint);
-  background-color: hsla(0, 0%, 50%, 0.09);
+  background-color: hsla(0, 0%, 50%, 0.09) !important;
 }
 
 /* Today highlight — highest priority, overrides everything */
@@ -153,7 +155,7 @@
 /* Weekend empty/nonexistent cells should still show shading */
 .qc-day-cell.qc-nonexistent.qc-weekend,
 .qc-day-cell.qc-empty.qc-weekend {
-  background-color: hsla(0, 0%, 50%, 0.12);
+  background-color: hsla(0, 0%, 50%, 0.12) !important;
 }
 
 /* Day headers */
@@ -255,8 +257,8 @@
 }
 
 .qc-row-weekend-header {
-  color: var(--text-faint);
-  background-color: hsla(0, 0%, 50%, 0.09);
+  color: var(--text-faint) !important;
+  background-color: hsla(0, 0%, 50%, 0.09) !important;
 }
 
 .qc-row-month-row .qc-day-cell {
