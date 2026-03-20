@@ -1,0 +1,26 @@
+{
+  "name": "obsidian-quickcalendar",
+  "version": "0.1.0",
+  "description": "A year-at-a-glance calendar plugin for Obsidian with multiple view modes",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "obsidian",
+    "calendar",
+    "daily-notes",
+    "year-view"
+  ],
+  "author": "Scott Novis",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "0.20.0",
+    "obsidian": "latest",
+    "tslib": "2.6.2",
+    "typescript": "5.3.3"
+  }
+}

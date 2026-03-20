@@ -1,0 +1,238 @@
+/* ============================================================
+   QuickCalendar — Theme-aware styles
+   Uses Obsidian CSS variables for native look across all themes.
+   ============================================================ */
+
+/* ---------- Base container ---------- */
+.quickcalendar {
+  font-family: var(--font-interface);
+  font-size: var(--font-smallest);
+  color: var(--text-normal);
+  padding: 8px;
+}
+
+.qc-year-title {
+  text-align: center;
+  font-size: var(--font-ui-medium);
+  font-weight: 600;
+  color: var(--text-normal);
+  margin: 0 0 12px 0;
+  padding: 0;
+}
+
+.qc-error {
+  color: var(--text-error);
+  background: var(--background-modifier-error);
+  padding: 8px 12px;
+  border-radius: var(--radius-s);
+}
+
+/* ---------- Common table styles ---------- */
+.quickcalendar table {
+  border-collapse: collapse;
+}
+
+.quickcalendar th,
+.quickcalendar td {
+  text-align: center;
+  padding: 0;
+}
+
+/* ---------- Day cells ---------- */
+.qc-day-cell {
+  position: relative;
+  width: 28px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: var(--radius-s);
+  transition: background-color 0.1s ease;
+}
+
+.qc-day-link {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  color: var(--text-normal);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--radius-s);
+}
+
+.qc-day-link:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+  text-decoration: none;
+}
+
+/* Weekend shading */
+.qc-weekend .qc-day-link {
+  color: var(--text-muted);
+}
+
+.qc-weekend {
+  background-color: var(--background-secondary-alt);
+}
+
+/* Today highlight */
+.qc-today {
+  background-color: var(--interactive-accent);
+  border-radius: var(--radius-s);
+}
+
+.qc-today .qc-day-link {
+  color: var(--text-on-accent);
+  font-weight: 700;
+}
+
+/* Has note indicator */
+.qc-has-note .qc-day-link {
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--interactive-accent);
+  text-underline-offset: 2px;
+}
+
+/* Empty / non-existent cells */
+.qc-empty,
+.qc-nonexistent {
+  background: transparent;
+}
+
+/* Day headers */
+.qc-day-header {
+  font-size: var(--font-smallest);
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 2px 0 4px 0;
+  width: 28px;
+}
+
+/* Week numbers */
+.qc-week-num-header,
+.qc-week-num {
+  font-size: 0.75em;
+  color: var(--text-faint);
+  width: 24px;
+  padding-right: 4px;
+  text-align: right;
+}
+
+/* ---------- Grid view (3×4) ---------- */
+.qc-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 24px;
+}
+
+.qc-grid-month {
+  min-width: 0;
+}
+
+.qc-month-title {
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  color: var(--text-normal);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.qc-month-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* ---------- Row view (horizontal strips) ---------- */
+.qc-row-view {
+  overflow-x: auto;
+}
+
+.qc-row-table {
+  table-layout: fixed;
+}
+
+.qc-row-month-name {
+  font-weight: 600;
+  color: var(--text-normal);
+  text-align: left;
+  padding-right: 8px;
+  white-space: nowrap;
+  width: 40px;
+}
+
+.qc-row-day-header {
+  font-size: 0.7em;
+  color: var(--text-muted);
+  width: 26px;
+}
+
+.qc-row-month-row .qc-day-cell {
+  width: 26px;
+  height: 22px;
+  line-height: 22px;
+}
+
+.qc-row-view .qc-day-link {
+  font-size: 0.85em;
+}
+
+/* ---------- Stream view (continuous) ---------- */
+.qc-stream-view {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.qc-stream-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.qc-stream-month-separator td {
+  font-size: var(--font-ui-small);
+  font-weight: 700;
+  color: var(--text-accent);
+  text-align: left;
+  padding: 12px 0 4px 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.qc-focus-month {
+  background-color: var(--background-primary-alt);
+}
+
+/* Outside-year days in stream */
+.qc-outside-year {
+  opacity: 0.3;
+}
+
+.qc-day-dim {
+  color: var(--text-faint);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .qc-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  .qc-grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Print styles ---------- */
+@media print {
+  .quickcalendar {
+    break-inside: avoid;
+  }
+
+  .qc-day-link {
+    color: black !important;
+  }
+
+  .qc-today {
+    border: 2px solid black;
+    background: none;
+  }
+}
