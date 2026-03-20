@@ -1,4 +1,4 @@
-import { Plugin } from 'obsidian';
+import { Plugin, MarkdownPostProcessorContext, MarkdownView } from 'obsidian';
 import {
   QuickCalendarSettings,
   QuickCalendarConfig,
@@ -28,7 +28,7 @@ export default class QuickCalendarPlugin extends Plugin {
     this.registerMarkdownCodeBlockProcessor(
       'quickcalendar',
       (source, el, ctx) => {
-        this.processCodeBlock(source, el);
+        this.processCodeBlock(source, el, ctx);
       },
     );
 
@@ -54,7 +54,11 @@ export default class QuickCalendarPlugin extends Plugin {
    * Process a ```quickcalendar code block.
    * Parses JSON config, builds calendar data, renders toolbar + calendar view.
    */
-  private processCodeBlock(source: string, el: HTMLElement): void {
+  private processCodeBlock(
+    source: string,
+    el: HTMLElement,
+    ctx: MarkdownPostProcessorContext,
+  ): void {
     // Parse config from code block content
     let userConfig: Partial<QuickCalendarConfig> = {};
     const trimmed = source.trim();
@@ -82,15 +86,20 @@ export default class QuickCalendarPlugin extends Plugin {
     // Wrapper that holds everything
     const wrapper = el.createEl('div', { cls: 'quickcalendar' });
 
-    // Render toolbar + calendar
-    this.renderWithToolbar(wrapper, config);
+    // Render toolbar + calendar (pass el for getSectionInfo)
+    this.renderWithToolbar(wrapper, config, ctx, el);
   }
 
   /**
-   * Render the toolbar (year nav + view toggle) and the calendar.
+   * Render the toolbar (year nav + view toggle + week num toggle) and the calendar.
    * Called on initial render and again when controls are clicked.
    */
-  private renderWithToolbar(wrapper: HTMLElement, config: QuickCalendarConfig): void {
+  private renderWithToolbar(
+    wrapper: HTMLElement,
+    config: QuickCalendarConfig,
+    ctx: MarkdownPostProcessorContext,
+    codeBlockEl: HTMLElement,
+  ): void {
     wrapper.empty();
     wrapper.className = `quickcalendar qc-view-${config.view}`;
 
@@ -107,7 +116,8 @@ export default class QuickCalendarPlugin extends Plugin {
     });
     prevBtn.addEventListener('click', () => {
       config.year--;
-      this.renderWithToolbar(wrapper, config);
+      this.persistConfig(config, ctx, codeBlockEl);
+      this.renderWithToolbar(wrapper, config, ctx, codeBlockEl);
     });
 
     yearNav.createEl('span', {
@@ -122,7 +132,8 @@ export default class QuickCalendarPlugin extends Plugin {
     });
     nextBtn.addEventListener('click', () => {
       config.year++;
-      this.renderWithToolbar(wrapper, config);
+      this.persistConfig(config, ctx, codeBlockEl);
+      this.renderWithToolbar(wrapper, config, ctx, codeBlockEl);
     });
 
     // View toggle buttons
@@ -135,10 +146,23 @@ export default class QuickCalendarPlugin extends Plugin {
       btn.addEventListener('click', () => {
         if (view !== config.view) {
           config.view = view;
-          this.renderWithToolbar(wrapper, config);
+          this.persistConfig(config, ctx, codeBlockEl);
+          this.renderWithToolbar(wrapper, config, ctx, codeBlockEl);
         }
       });
     }
+
+    // Week number toggle
+    const weekNumBtn = toolbar.createEl('button', {
+      cls: `qc-view-btn${config.weekNumbers ? ' qc-view-active' : ''}`,
+      text: 'W#',
+      attr: { 'aria-label': 'Toggle week numbers' },
+    });
+    weekNumBtn.addEventListener('click', () => {
+      config.weekNumbers = !config.weekNumbers;
+      this.persistConfig(config, ctx, codeBlockEl);
+      this.renderWithToolbar(wrapper, config, ctx, codeBlockEl);
+    });
 
     // --- Calendar content ---
     const calendarContainer = wrapper.createEl('div', { cls: 'qc-calendar-content' });
@@ -172,6 +196,36 @@ export default class QuickCalendarPlugin extends Plugin {
         text: `QuickCalendar: ${(e as Error).message}`,
       });
     }
+  }
+
+  /**
+   * Write the current config back into the code block JSON so changes persist.
+   * Uses the MarkdownPostProcessorContext to locate the code block in the source,
+   * then replaces the JSON content via the editor API.
+   */
+  private persistConfig(
+    config: QuickCalendarConfig,
+    ctx: MarkdownPostProcessorContext,
+    codeBlockEl: HTMLElement,
+  ): void {
+    const sectionInfo = ctx.getSectionInfo(codeBlockEl);
+    if (!sectionInfo) return;
+
+    const { lineStart, lineEnd } = sectionInfo;
+    const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+    if (!view) return;
+
+    const editor = view.editor;
+
+    // Build pretty-printed JSON
+    const json = JSON.stringify(config, null, 2);
+
+    // Replace the content between the opening ``` and closing ``` lines
+    // lineStart is the ``` quickcalendar line, lineEnd is the closing ```
+    const from = { line: lineStart + 1, ch: 0 };
+    const to = { line: lineEnd, ch: 0 };
+
+    editor.replaceRange(json + '\n', from, to);
   }
 
   private validateView(view: string | undefined): CalendarView | null {
