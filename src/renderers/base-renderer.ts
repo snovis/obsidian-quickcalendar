@@ -77,8 +77,13 @@ export abstract class BaseRenderer {
       headerRow.createEl('th', { cls: 'qc-week-num-header', text: 'W' });
     }
 
+    const weekendNames = new Set(['Sa', 'Su']);
     for (const h of headers) {
-      headerRow.createEl('th', { cls: 'qc-day-header', text: h });
+      const isWeekend = weekendNames.has(h);
+      headerRow.createEl('th', {
+        cls: `qc-day-header${isWeekend ? ' qc-day-header-weekend' : ''}`,
+        text: h,
+      });
     }
   }
 

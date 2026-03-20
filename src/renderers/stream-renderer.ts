@@ -12,13 +12,6 @@ import { getISOWeekNumber, weekDayToIndex } from '../utils/date-utils';
 export class StreamRenderer extends BaseRenderer {
   render(container: HTMLElement): void {
     const wrapper = container.createEl('div', { cls: 'qc-stream-view' });
-
-    // Year title
-    wrapper.createEl('h2', {
-      cls: 'qc-year-title',
-      text: String(this.config.year),
-    });
-
     const table = wrapper.createEl('table', { cls: 'qc-stream-table' });
     const thead = table.createEl('thead');
     this.createDayHeaders(thead, true);

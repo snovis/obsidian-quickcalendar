@@ -7,13 +7,6 @@ import { BaseRenderer } from './base-renderer';
 export class GridRenderer extends BaseRenderer {
   render(container: HTMLElement): void {
     const wrapper = container.createEl('div', { cls: 'qc-grid-view' });
-
-    // Year title
-    wrapper.createEl('h2', {
-      cls: 'qc-year-title',
-      text: String(this.config.year),
-    });
-
     const grid = wrapper.createEl('div', { cls: 'qc-grid-container' });
 
     for (const monthData of this.months) {

@@ -9,13 +9,6 @@ import { MonthData, DayInfo } from '../types';
 export class RowRenderer extends BaseRenderer {
   render(container: HTMLElement): void {
     const wrapper = container.createEl('div', { cls: 'qc-row-view' });
-
-    // Year title
-    wrapper.createEl('h2', {
-      cls: 'qc-year-title',
-      text: String(this.config.year),
-    });
-
     const table = wrapper.createEl('table', { cls: 'qc-row-table' });
 
     // Header row with day numbers 1-31
