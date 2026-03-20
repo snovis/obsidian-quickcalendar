@@ -112,29 +112,29 @@
   text-decoration: none;
 }
 
-/* Weekend shading — uses background-secondary which works in all themes */
-.qc-weekend {
-  background-color: var(--background-secondary);
+/* Weekend shading — distinct tint visible in both light and dark themes */
+.qc-day-cell.qc-weekend {
+  background-color: var(--background-secondary-alt, var(--background-secondary));
 }
 
-.qc-weekend .qc-day-link {
+.qc-day-cell.qc-weekend .qc-day-link {
   color: var(--text-muted);
 }
 
 /* Weekend column headers */
 .qc-day-header-weekend {
   color: var(--text-faint);
-  background-color: var(--background-secondary);
+  background-color: var(--background-secondary-alt, var(--background-secondary));
 }
 
-/* Today highlight (overrides weekend shading) */
-.qc-today {
-  background-color: var(--interactive-accent);
+/* Today highlight — highest priority, overrides everything */
+.qc-day-cell.qc-today {
+  background-color: var(--interactive-accent) !important;
   border-radius: var(--radius-s);
 }
 
-.qc-today .qc-day-link {
-  color: var(--text-on-accent);
+.qc-day-cell.qc-today .qc-day-link {
+  color: var(--text-on-accent) !important;
   font-weight: 700;
 }
 
@@ -149,13 +149,13 @@
 /* Empty / non-existent cells */
 .qc-empty,
 .qc-nonexistent {
-  background: transparent;
+  background-color: transparent;
 }
 
-/* Weekend empty cells should still show shading */
-.qc-nonexistent.qc-weekend,
-.qc-empty.qc-weekend {
-  background-color: var(--background-secondary);
+/* Weekend empty/nonexistent cells should still show shading */
+.qc-day-cell.qc-nonexistent.qc-weekend,
+.qc-day-cell.qc-empty.qc-weekend {
+  background-color: var(--background-secondary-alt, var(--background-secondary));
 }
 
 /* Day headers */
@@ -183,6 +183,7 @@
   cursor: pointer;
   border-radius: var(--radius-s);
   padding: 1px 2px;
+  font-size: 0.85em;
 }
 
 .qc-week-link:hover {

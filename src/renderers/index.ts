@@ -19,6 +19,7 @@ const RENDERERS: Record<CalendarView, new (
   config: QuickCalendarConfig,
   months: MonthData[],
   dailyNoteSettings: { folder: string; format: string; template: string },
+  weeklyNoteTemplate?: string,
 ) => BaseRenderer> = {
   grid: GridRenderer,
   row: RowRenderer,
@@ -33,12 +34,13 @@ export function createRenderer(
   config: QuickCalendarConfig,
   months: MonthData[],
   dailyNoteSettings: { folder: string; format: string; template: string },
+  weeklyNoteTemplate: string = '',
 ): BaseRenderer {
   const RendererClass = RENDERERS[view];
   if (!RendererClass) {
     throw new Error(`Unknown QuickCalendar view: ${view}`);
   }
-  return new RendererClass(app, config, months, dailyNoteSettings);
+  return new RendererClass(app, config, months, dailyNoteSettings, weeklyNoteTemplate);
 }
 
 /** Get list of available view types */

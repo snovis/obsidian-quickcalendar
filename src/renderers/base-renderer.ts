@@ -18,17 +18,20 @@ export abstract class BaseRenderer {
   protected config: QuickCalendarConfig;
   protected months: MonthData[];
   protected dailyNoteSettings: { folder: string; format: string; template: string };
+  protected weeklyNoteTemplate: string;
 
   constructor(
     app: App,
     config: QuickCalendarConfig,
     months: MonthData[],
     dailyNoteSettings: { folder: string; format: string; template: string },
+    weeklyNoteTemplate: string = '',
   ) {
     this.app = app;
     this.config = config;
     this.months = months;
     this.dailyNoteSettings = dailyNoteSettings;
+    this.weeklyNoteTemplate = weeklyNoteTemplate;
   }
 
   /** Render the calendar into the given container element */
@@ -108,6 +111,7 @@ export abstract class BaseRenderer {
           year,
           weekNum,
           this.dailyNoteSettings.folder,
+          this.weeklyNoteTemplate,
         );
       });
     } else {

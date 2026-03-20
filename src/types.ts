@@ -39,6 +39,8 @@ export interface QuickCalendarSettings {
   dailyNoteFolder: string;
   /** Daily note template path */
   dailyNoteTemplate: string;
+  /** Weekly note template path */
+  weeklyNoteTemplate: string;
 }
 
 export const DEFAULT_SETTINGS: QuickCalendarSettings = {
@@ -48,6 +50,7 @@ export const DEFAULT_SETTINGS: QuickCalendarSettings = {
   dailyNoteDateFormat: 'YYYY-MM-DD',
   dailyNoteFolder: '',
   dailyNoteTemplate: '',
+  weeklyNoteTemplate: '',
 };
 
 /** Metadata about a single day cell for rendering */

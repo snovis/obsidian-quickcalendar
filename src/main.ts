@@ -163,6 +163,7 @@ export default class QuickCalendarPlugin extends Plugin {
         config,
         months,
         dailyNoteSettings,
+        this.settings.weeklyNoteTemplate,
       );
       renderer.render(calendarContainer);
     } catch (e) {

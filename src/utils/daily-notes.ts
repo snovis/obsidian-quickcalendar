@@ -128,6 +128,7 @@ export async function openOrCreateWeeklyNote(
   year: number,
   weekNum: number,
   folder: string,
+  templatePath: string,
 ): Promise<void> {
   const filename = formatWeekFilename(year, weekNum);
   const folderPath = folder ? normalizePath(folder) : '';
@@ -150,7 +151,21 @@ export async function openOrCreateWeeklyNote(
     }
   }
 
-  // Create empty file — Templater folder trigger will handle template application
-  const newFile = await app.vault.create(normalizedPath, '');
+  // Read template if specified
+  let content = '';
+  if (templatePath) {
+    const tplPath = normalizePath(templatePath);
+    const tplFile = app.vault.getAbstractFileByPath(tplPath);
+    if (tplFile instanceof TFile) {
+      content = await app.vault.read(tplFile);
+      // Basic variable substitution
+      content = content
+        .replace(/{{title}}/g, filename)
+        .replace(/{{date}}/g, filename)
+        .replace(/{{time}}/g, new Date().toLocaleTimeString());
+    }
+  }
+
+  const newFile = await app.vault.create(normalizedPath, content);
   await app.workspace.getLeaf(false).openFile(newFile);
 }

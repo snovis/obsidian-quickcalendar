@@ -110,5 +110,19 @@ export class QuickCalendarSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           }),
       );
+
+    // Weekly note template
+    new Setting(containerEl)
+      .setName('Weekly note template')
+      .setDesc('Path to template file for new weekly notes (created when clicking week numbers). Leave blank to create empty files.')
+      .addText((text) =>
+        text
+          .setPlaceholder('templater/Weekly Note Template.md')
+          .setValue(this.plugin.settings.weeklyNoteTemplate)
+          .onChange(async (value) => {
+            this.plugin.settings.weeklyNoteTemplate = value;
+            await this.plugin.saveSettings();
+          }),
+      );
   }
 }
