@@ -1,60 +1,51 @@
 import { BaseRenderer } from './base-renderer';
 import { MonthData, DayInfo } from '../types';
-import { weekDayToIndex } from '../utils/date-utils';
+import { openOrCreateDailyNote } from '../utils/daily-notes';
 
 /**
- * Row view: 12 horizontal strips, one per month.
- * Days are aligned to day-of-week columns (like a Yearly Planner).
- * The header shows cycling day abbreviations across all 37 columns.
- * Weekends are shaded. Compact, scannable layout.
+ * Row view: Compact horizontal yearly planner.
+ * 12 rows (one per month), 31 columns (one per day-of-month).
+ * Header shows day numbers 1–31. Month names are sticky on the left.
+ * Very small font (8pt), thin Helvetica/Arial, 18px tall cells.
+ * Day-of-week is shown as a single letter inside each cell.
  */
 export class RowRenderer extends BaseRenderer {
-  /** Max columns needed: up to 6 offset days + 31 days = 37 */
-  private readonly TOTAL_COLS = 37;
+  private readonly MAX_DAYS = 31;
+  private readonly DOW_LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   render(container: HTMLElement): void {
     const wrapper = container.createEl('div', { cls: 'qc-row-view' });
     const table = wrapper.createEl('table', { cls: 'qc-row-table' });
 
-    const startDayIndex = weekDayToIndex(this.config.startDay);
-    const dayAbbrevs = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-
-    // Build cycling day-of-week header
+    // Header row: month label + day numbers 1–31
     const thead = table.createEl('thead');
     const headerRow = thead.createEl('tr', { cls: 'qc-row-header' });
     headerRow.createEl('th', { cls: 'qc-row-month-label', text: '' });
 
-    for (let c = 0; c < this.TOTAL_COLS; c++) {
-      const dowIndex = (startDayIndex + c) % 7;
-      const isWe = dowIndex === 0 || dowIndex === 6;
+    for (let d = 1; d <= this.MAX_DAYS; d++) {
       headerRow.createEl('th', {
-        cls: `qc-row-day-header${isWe ? ' qc-row-weekend-header' : ''}`,
-        text: dayAbbrevs[dowIndex],
+        cls: 'qc-row-day-header',
+        text: String(d),
       });
     }
 
     const tbody = table.createEl('tbody');
 
     for (const monthData of this.months) {
-      this.renderMonthRow(tbody, monthData, startDayIndex);
+      this.renderMonthRow(tbody, monthData);
     }
   }
 
-  private renderMonthRow(tbody: HTMLElement, monthData: MonthData, startDayIndex: number): void {
+  private renderMonthRow(tbody: HTMLElement, monthData: MonthData): void {
     const row = tbody.createEl('tr', { cls: 'qc-row-month-row' });
 
-    // Month label
+    // Month label (sticky left)
     row.createEl('td', {
       cls: 'qc-row-month-name',
       text: monthData.shortName,
     });
 
-    // What day-of-week does the 1st fall on?
-    const firstDow = new Date(monthData.year, monthData.month, 1).getDay();
-    // How many columns to offset from the left
-    const offset = (firstDow - startDayIndex + 7) % 7;
-
-    // Flatten days into a map
+    // Flatten days into a map by day number
     const dayMap = new Map<number, DayInfo>();
     for (const week of monthData.weeks) {
       for (const day of week) {
@@ -66,21 +57,43 @@ export class RowRenderer extends BaseRenderer {
 
     const daysInMonth = new Date(monthData.year, monthData.month + 1, 0).getDate();
 
-    for (let c = 0; c < this.TOTAL_COLS; c++) {
-      const dayNum = c - offset + 1;
-      if (dayNum >= 1 && dayNum <= daysInMonth) {
-        const dayInfo = dayMap.get(dayNum);
+    for (let d = 1; d <= this.MAX_DAYS; d++) {
+      if (d <= daysInMonth) {
+        const dayInfo = dayMap.get(d);
         if (dayInfo) {
-          this.createDayCell(row, dayInfo);
+          this.createRowDayCell(row, dayInfo);
         } else {
           this.createEmptyCell(row);
         }
       } else {
-        // Empty padding cell — but mark weekend columns
-        const dowIndex = (startDayIndex + c) % 7;
-        const isWe = dowIndex === 0 || dowIndex === 6;
-        row.createEl('td', { cls: `qc-day-cell qc-nonexistent${isWe ? ' qc-weekend' : ''}` });
+        // Day doesn't exist in this month
+        row.createEl('td', { cls: 'qc-day-cell qc-nonexistent' });
       }
     }
+  }
+
+  /**
+   * Create a compact day cell for row view.
+   * Shows the day-of-week letter (S/M/T/W/T/F/S) instead of the day number.
+   */
+  private createRowDayCell(parent: HTMLElement, dayInfo: DayInfo): HTMLElement {
+    const cell = parent.createEl('td', {
+      cls: this.getDayCellClasses(dayInfo),
+    });
+
+    const dowLetter = this.DOW_LETTERS[dayInfo.date.getDay()];
+
+    const link = cell.createEl('a', {
+      cls: 'qc-day-link',
+      text: dowLetter,
+      attr: { 'data-date': dayInfo.noteFilename },
+    });
+
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      openOrCreateDailyNote(this.app, dayInfo.date, this.dailyNoteSettings);
+    });
+
+    return cell;
   }
 }

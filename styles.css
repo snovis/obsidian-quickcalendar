@@ -216,7 +216,7 @@
   table-layout: fixed;
 }
 
-/* ---------- Row view (yearly planner strips) ---------- */
+/* ---------- Row view (compact yearly planner) ---------- */
 .qc-row-view {
   overflow-x: auto;
 }
@@ -224,23 +224,24 @@
 .qc-row-table {
   table-layout: fixed;
   border-collapse: collapse;
-  font-family: 'SF Mono', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
-  font-size: 0.7em;
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  font-size: 8pt;
+  font-weight: 300;
 }
 
 .qc-row-month-label {
-  width: 36px;
+  width: 32px;
 }
 
 .qc-row-month-name {
-  font-weight: 700;
-  font-family: var(--font-interface);
-  font-size: 1.1em;
+  font-weight: 600;
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  font-size: 8pt;
   color: var(--text-normal);
   text-align: left;
-  padding-right: 6px;
+  padding-right: 4px;
   white-space: nowrap;
-  width: 36px;
+  width: 32px;
   position: sticky;
   left: 0;
   background: var(--background-primary);
@@ -248,36 +249,49 @@
 }
 
 .qc-row-day-header {
-  font-size: 0.85em;
+  font-size: 7pt;
+  font-weight: 400;
   color: var(--text-muted);
-  width: 20px;
-  min-width: 20px;
-  max-width: 20px;
-  padding: 1px 0;
-}
-
-.qc-row-weekend-header {
-  color: var(--text-faint) !important;
-  background-color: hsla(0, 0%, 50%, 0.09) !important;
+  width: 18px;
+  min-width: 18px;
+  max-width: 18px;
+  height: 14px;
+  padding: 0;
 }
 
 .qc-row-month-row .qc-day-cell {
-  width: 20px;
-  min-width: 20px;
-  max-width: 20px;
-  height: 20px;
-  line-height: 20px;
+  width: 18px;
+  min-width: 18px;
+  max-width: 18px;
+  height: 18px;
+  line-height: 18px;
   border-radius: 2px;
 }
 
 .qc-row-view .qc-day-link {
-  font-size: 1em;
-  line-height: 20px;
+  font-size: 7pt;
+  font-weight: 300;
+  line-height: 18px;
 }
 
-/* Row view weekend shading for entire columns */
+/* Nonexistent days (past end of month) — subtle */
+.qc-row-month-row .qc-nonexistent {
+  background-color: transparent;
+}
+
+/* Row view weekend shading */
 .qc-row-month-row .qc-weekend {
-  background-color: hsla(0, 0%, 50%, 0.09);
+  background-color: hsla(0, 0%, 50%, 0.12) !important;
+}
+
+/* Row view today — keep compact */
+.qc-row-month-row .qc-today {
+  background-color: var(--interactive-accent) !important;
+}
+
+.qc-row-month-row .qc-today .qc-day-link {
+  color: var(--text-on-accent) !important;
+  font-weight: 600;
 }
 
 /* ---------- Stream view (continuous) ---------- */
