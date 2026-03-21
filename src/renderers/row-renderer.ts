@@ -19,7 +19,7 @@ export class RowRenderer extends BaseRenderer {
     const table = wrapper.createEl('table', { cls: 'qc-row-table' });
 
     const startDayIndex = weekDayToIndex(this.config.startDay);
-    const dayAbbrevs = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const dayAbbrevs = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     // --- Header row: cycling day-of-week abbreviations ---
     const thead = table.createEl('thead');
@@ -89,11 +89,17 @@ export class RowRenderer extends BaseRenderer {
       const isWe = dowIndex === 0 || dowIndex === 6;
 
       if (dayNum >= 1 && dayNum <= daysInMonth) {
+        // Build box-boundary classes
+        const boxCls: string[] = ['qc-row-box'];
+        if (dayNum === 1) boxCls.push('qc-row-box-left');
+        if (dayNum === daysInMonth) boxCls.push('qc-row-box-right');
+
         const dayInfo = dayMap.get(dayNum);
         if (dayInfo) {
-          this.createRowDayCell(row, dayInfo, isWe);
+          this.createRowDayCell(row, dayInfo, boxCls);
         } else {
-          this.createEmptyCell(row);
+          const cell = this.createEmptyCell(row);
+          cell.addClass(...boxCls);
         }
       } else {
         // Empty padding — still shade weekends
@@ -108,10 +114,10 @@ export class RowRenderer extends BaseRenderer {
   private createRowDayCell(
     parent: HTMLElement,
     dayInfo: DayInfo,
-    _isWeekend: boolean,
+    extraCls: string[] = [],
   ): HTMLElement {
     const cell = parent.createEl('td', {
-      cls: this.getDayCellClasses(dayInfo),
+      cls: this.getDayCellClasses(dayInfo) + ' ' + extraCls.join(' '),
     });
 
     const link = cell.createEl('a', {

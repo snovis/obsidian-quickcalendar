@@ -271,12 +271,15 @@
 }
 
 .qc-row-month-name {
-  font-weight: 700;
-  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-  font-size: 8pt;
-  color: var(--text-normal);
+  font-weight: 600 !important;
+  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !important;
+  font-size: 9pt !important;
+  color: var(--text-muted) !important;
   text-align: left;
+  vertical-align: middle !important;
   padding: 0 3px !important;
+  height: 18px;
+  line-height: 18px;
   white-space: nowrap;
   width: 30px;
   min-width: 30px;
@@ -289,7 +292,7 @@
 .qc-row-table th.qc-row-day-header {
   font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif !important;
   font-size: 7pt !important;
-  font-weight: 400 !important;
+  font-weight: 700 !important;
   color: var(--text-muted) !important;
   width: 20px !important;
   min-width: 20px !important;
@@ -343,6 +346,20 @@
 .qc-row-month-row .qc-today .qc-day-link {
   color: var(--text-on-accent) !important;
   font-weight: 600;
+}
+
+/* Row view month box — solid border around each month's active days */
+.qc-row-box {
+  border-top: 2px solid var(--text-normal) !important;
+  border-bottom: 2px solid var(--text-normal) !important;
+}
+
+.qc-row-box-left {
+  border-left: 2px solid var(--text-normal) !important;
+}
+
+.qc-row-box-right {
+  border-right: 2px solid var(--text-normal) !important;
 }
 
 /* ---------- Stream view (continuous) ---------- */
