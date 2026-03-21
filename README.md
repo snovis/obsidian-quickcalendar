@@ -43,15 +43,17 @@ Create a fenced code block with the `quickcalendar` language identifier:
 
 ## Screenshots
 
-*Screenshots coming soon*
+### Grid View
+![Grid View](img/qc-grid.png)
 
-<!--
-TODO: Add screenshots of each view mode
-![Grid View](screenshots/grid.png)
-![Row View](screenshots/row.png)
-![Stream View](screenshots/stream.png)
-![List View](screenshots/list.png)
--->
+### Row View
+![Row View](img/qc-row.png)
+
+### Stream View
+![Stream View](img/qc-stream.png)
+
+### List View
+![List View](img/qc-list.png)
 
 ## Settings
 
