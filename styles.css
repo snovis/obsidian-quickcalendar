@@ -216,6 +216,34 @@
   table-layout: fixed;
 }
 
+/* Grid view cells — comfortable mini-calendar sizing */
+.qc-grid-month .qc-day-cell {
+  height: 22px;
+  line-height: 22px;
+}
+
+.qc-grid-month .qc-day-link {
+  font-size: var(--font-ui-smaller);
+  line-height: 22px;
+}
+
+.qc-grid-month .qc-day-header {
+  font-size: var(--font-smallest);
+  padding: 2px 0 3px 0;
+}
+
+.qc-grid-month .qc-week-num,
+.qc-grid-month .qc-week-num-header {
+  font-size: var(--font-smallest);
+  width: 18px;
+  padding-right: 2px;
+}
+
+.qc-grid-month .qc-week-link {
+  font-size: var(--font-smallest);
+  padding: 0 1px;
+}
+
 /* ---------- Row view (compact yearly planner) ---------- */
 .qc-row-view {
   overflow-x: auto;
